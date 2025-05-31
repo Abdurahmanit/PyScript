@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Enhanced StatusAggregator{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Custom status colors - these are fine as they don't use @apply */
+        .status-operational { background-color: #10B981; color: white; } /* Green-500 */
+        .status-degraded { background-color: #F59E0B; color: black; } /* Amber-500 */
+        .status-minor-outage { background-color: #F97316; color: white; } /* Orange-500 */
+        .status-major-outage { background-color: #EF4444; color: white; } /* Red-500 */
+        .status-unknown, .status-pending-first-check { background-color: #6B7280; color: white; } /* Gray-500 */
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <nav class="bg-gray-800 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{{ url_for('index_route') }}" class="text-2xl font-bold hover:text-gray-300">EnhancedStatusAggregator</a>
+            <div>
+                {% if session.user_id %}
+                    <span class="mr-4">Welcome, {{ session.username }}!</span>
+                    <a href="{{ url_for('dashboard_route') }}" class="py-2 px-4 rounded-md font-semibold shadow-md transition duration-150 ease-in-out bg-gray-700 hover:bg-gray-600 text-white mr-2">Dashboard</a>
+                    <a href="{{ url_for('logout_route') }}" class="py-2 px-4 rounded-md font-semibold shadow-md transition duration-150 ease-in-out bg-red-500 hover:bg-red-600 text-white">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login_route') }}" class="py-2 px-4 rounded-md font-semibold shadow-md transition duration-150 ease-in-out bg-green-500 hover:bg-green-600 text-white mr-2">Login</a>
+                    <a href="{{ url_for('register_route') }}" class="py-2 px-4 rounded-md font-semibold shadow-md transition duration-150 ease-in-out bg-blue-500 hover:bg-blue-600 text-white">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-8 p-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {# Applying alert styles directly using Tailwind classes #}
+                    <div class="p-4 mb-4 rounded-md
+                        {% if category == 'success' %} bg-green-100 border border-green-400 text-green-700
+                        {% elif category == 'danger' %} bg-red-100 border border-red-400 text-red-700
+                        {% elif category == 'warning' %} bg-yellow-100 border border-yellow-400 text-yellow-700
+                        {% else %} bg-blue-100 border border-blue-400 text-blue-700 {% endif %}"
+                        role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center text-gray-600 py-8 mt-12 border-t border-gray-300">
+        <p>&copy; {{ now.year }} EnhancedStatusAggregator SRE Demo</p>
+    </footer>
+    <script>
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('[role="alert"]'); // Changed selector
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 7000);
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

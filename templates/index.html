@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}Welcome - Enhanced StatusAggregator{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-lg shadow-xl text-center">
+    <h1 class="text-4xl font-bold mb-6 text-gray-700">Welcome to EnhancedStatusAggregator!</h1>
+    <p class="text-lg text-gray-600 mb-8">
+        Monitor the (simulated) status of your important services. Register or log in to get started.
+    </p>
+    {% if not session.user_id %}
+    <div class="space-x-4">
+        {# Apply button styles directly #}
+        <a href="{{ url_for('register_route') }}" class="py-2 px-8 rounded-md font-semibold shadow-md transition duration-150 ease-in-out bg-blue-600 hover:bg-blue-700 text-white text-lg">Register Now</a>
+        <a href="{{ url_for('login_route') }}" class="py-2 px-8 rounded-md font-semibold shadow-md transition duration-150 ease-in-out bg-gray-500 hover:bg-gray-600 text-white text-lg">Login</a>
+    </div>
+    {% else %}
+    <p class="text-lg text-gray-600 mb-8">
+        You are logged in. Go to your dashboard to manage your services.
+    </p>
+    <a href="{{ url_for('dashboard_route') }}" class="py-2 px-8 rounded-md font-semibold shadow-md transition duration-150 ease-in-out bg-blue-600 hover:bg-blue-700 text-white text-lg">Go to Dashboard</a>
+    {% endif %}
+</div>
+{% endblock %}
